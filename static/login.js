@@ -6,21 +6,26 @@ if (!localStorage.getItem('login_name')) {
 	document.getElementById('login').innerHTML = "Register";
 
 	//Validate password and repassword match and are greater than 7
-	document.getElementById('login').disabled = true;
-	document.querySelectorAll('#password, #repassword').forEach(onkeyup = () => {
-		if (document.getElementById('repassword').value.length > 7  && document.getElementById('password').value === document.getElementById('repassword').value)
-			document.getElementById('login').disabled = false;
-		else
-			document.getElementById('login').disabled = true;
-	});
+	
+	document.getElementById('login-form').addEventListener("submit", validatePassword);
+	function validatePassword() {
+		let submitFlag = true; 
+		if (document.getElementById('password').value === document.getElementById('repassword').value)
+			submitFlag = true;
+		else {
+			submitFlag = false;
+			alert("Uh Oh! The Re-entered password did not match password.");
+		}
+		return submitFlag
+	};
 
 } else {
 	//Place login_name from local storage and make it read only
+	document.getElementById('name').innerHTML = "Welcome back " + localStorage.getItem('login_name') + "!";
 	document.getElementById('login_name').value = localStorage.getItem('login_name')
-	document.getElementById('login_name').readOnly = true;
 
 	// Remove Password fields
-	var list = document.getElementById("password_group");
+	var list = document.getElementById("repassword");
 	while (list.hasChildNodes()) {
 		list.removeChild(list.firstChild);
 	}

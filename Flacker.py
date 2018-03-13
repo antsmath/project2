@@ -1,5 +1,6 @@
 import hashlib, binascii
 
+#class for users of Flack
 class Flacker:
 
     #initialize Flacker

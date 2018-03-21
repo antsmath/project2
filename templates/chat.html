@@ -1,9 +1,10 @@
-{% extends "layout.html" %} {% block title %} Flacker Chat {% endblock %}
+{% extends "layout.html" %} {% block title %} Flack: {{ channel }} {% endblock %}
 
 <head>
     {% block head %}
     <script>
         localStorage.setItem('user_name', '{{ user_name }}');
+        localStorage.setItem('last_channel', '{{ channel }}');
     </script>
     <style>
         .sidenav {
@@ -56,9 +57,9 @@
     </style>
     {% endblock %}
 </head>
-{% block body%}
+{% block body %}
 <div id="mySidenav" class="sidenav">
-    <a href="{{ url_for('chat', channel = 'Main') }}" class="bg-primary">New channel</a>
+    <a href="{{ url_for('new_channel') }}" class="bg-primary">New channel</a>
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     {% for channel_item in channels %}
     {% if channel_item.name == channel %}
@@ -70,11 +71,11 @@
 </div>
 
 <div id="main">
-    <h1 class="d-inline">{{ channel }}</h1>
+    <h1 class="d-inline">Flack Channel: {{ channel }}</h1>
     <h6 class="d-inline text-muted">
-        <span style="cursor:pointer" onclick="openNav()">(Other Rooms)</span>
+        <span style="cursor:pointer" onclick="openNav()">(Other Channel)</span>
     </h6>
-    <p>"Success" {{ user_name }} </p>
+    <p>Flacker: {{ user_name }} </p>
     <form id="chat-text" name="chat-form" action="{{ url_for('chat', channel = 'Main') }}" method="POST">
         <fieldset>
             <div class="form-group">

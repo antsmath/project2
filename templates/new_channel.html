@@ -1,0 +1,22 @@
+{% extends "layout.html" %} {% block title %} New Channel {% endblock %} {% block body %}
+<h1>Create a new channel</h1>
+{% block alert %} {% endblock %}
+<div class="container">
+    <form id="new-channel-form" name="new-channel-form" action="{{ url_for('new_channel') }}" method="POST">
+        <fieldset>
+            <div class="row">
+                <div class="form-group">
+                    <input id="channel_name" autocomplete="off" autofocus class="form-control col-xs-3" name="channel_name" placeholder="Channel Name"
+                        type="text" pattern=".{1,14}" title="14 character maximum" required/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-xs-4">
+                    <button type="submit" id="login" class="btn btn-primary d-inline">Add</button>
+                    <a href="{{ url_for('chat_no_channel') }}" class="btn btn-secondary d-inline">Cancel</a>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+{% endblock %}

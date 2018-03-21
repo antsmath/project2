@@ -25,3 +25,8 @@ if (!localStorage.getItem('user_name')) {
 		list.removeChild(list.firstChild);
 	}
 };
+
+//Log user to last channel they had
+if (localStorage.getItem('last_channel')) {
+	document.getElementById('last_channel').value = localStorage.getItem('last_channel')
+};

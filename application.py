@@ -23,7 +23,9 @@ Session(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    # remove current flacker if one is available
     session.clear()
+
     if request.method == 'GET':
         return render_template('login.html')
 
@@ -66,7 +68,7 @@ def chat_no_channel():
 @app.route('/chat/<string:channel>', methods=['GET', 'POST'])
 def chat(channel):
 
-    #check if user_name is logged in
+    #check if flacker is logged in
     if session.get('user_name') is None:
         return redirect(url_for('index'))
 
@@ -81,7 +83,7 @@ def chat(channel):
 @app.route('/chat/new_channel', methods=['GET', 'POST'])
 def new_channel():
 
-    #check if user_name is logged in
+    #check if flacker is logged in
     if session.get('user_name') is None:
         return redirect(url_for('index'))
 
@@ -102,3 +104,25 @@ def new_channel():
             else:
                 channels.add(new_channel)
                 return redirect(url_for('chat', channel=channel_name))
+
+# #Enter a channel
+# @socketio.on('enter channel')
+# def enter_channel(sid, data):
+#     socketio.enter_room(sid, data['room'])
+
+# #Leave a channel
+# @socketio.on('leave channel')
+# def leave_channel(sid, data):
+#     socketio.leave_room(sid, data['room'])
+
+# #Send a message to a channel
+# @socketio.on('submit message')
+# def post_messsage(sid, damessageta, channel):
+#     socketio.emit('post message', message, room=channel)
+
+#Send a message to a channel
+@socketio.on('submit message')
+def post_messsage(data):
+    message = data['message']
+    print(message)
+    emit('post message', {'message': message}, broadcast=True)

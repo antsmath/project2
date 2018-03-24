@@ -6,6 +6,8 @@
         localStorage.setItem('user_name', '{{ user_name }}');
         localStorage.setItem('last_channel', '{{ channel }}');
     </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js" defer></script>
+    <script src="{{url_for('static', filename='chat.js')}}" defer></script>
     <style>
         .sidenav {
             height: 100%;
@@ -76,19 +78,24 @@
         <span style="cursor:pointer" onclick="openNav()">(Other Channel)</span>
     </h6>
     <p>Flacker: {{ user_name }} </p>
-    <form id="chat-text" name="chat-form" action="{{ url_for('chat', channel = 'Main') }}" method="POST">
+    <form id="chat-text" name="chat-form">
         <fieldset>
             <div class="form-group">
                 <!-- REMOVE STYLE!!! -->
-                <textarea form="chat-text" rows="4" placeholder="Type text here..." style="width: 100%; resize: none;" required></textarea>
+                <textarea id='text' form="chat-text" rows="4" placeholder="Type text here..." style="width: 100%; resize: none;" required></textarea>
             </div>
             <div class="form-group float-right inline">
-                <button type="submit" id="login" class="btn btn-primary">Submit</button>
+                <button type="submit" id="submit" class="btn btn-primary">Submit</button>
             </div>
         </fieldset>
     </form>
 </div>
-
+<ul id="votes">
+</ul>
+<hr>
+<button data-vote="yes">Yes</button>
+<button data-vote="no">No</button>
+<button data-vote="maybe">Maybe</button>
 <script>
     function openNav() {
         document.getElementById("mySidenav").style.width = "250px";

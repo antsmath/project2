@@ -57,13 +57,13 @@ if __name__ == '__main__':
 
     #Test password checker
     d = Flacker('Joe','Password')
-    d = Flacker('Joe1','Password')
+    d = Flacker('Joe_1','Password')
     assert d.password_equals('Password')
     assert not d.password_equals('password')
 
     #Test password hash is different with different name
-    d1 = Flacker('Joe1','Password')
-    d2 = Flacker('Joe1','Password')
-    d3 = Flacker('Joe2','Password')
+    d1 = Flacker('Joe_1','Password')
+    d2 = Flacker('Joe_1','Password')
+    d3 = Flacker('Joe_2','Password')
     assert d1.password == d2.password
     assert not d1.password == d3.password

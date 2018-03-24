@@ -6,7 +6,7 @@ if (!localStorage.getItem('user_name')) {
 	document.getElementById('login').innerHTML = "Register";
 
 	//Validate password and repassword match
-	document.getElementById('login').onclick = () => {
+	document.getElementById('login').onclick = (event) => {
 		let submitFlag = true;
 		if (!(document.getElementById('password').value === document.getElementById('repassword').value)) {
 			alert("Uh Oh! The Re-entered password did not match password.");

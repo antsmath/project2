@@ -1,7 +1,7 @@
 import os
 from flask import Flask, redirect, render_template, request, url_for, session
 from flask_session import Session
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, join_room, leave_room
 
 from Channel import Channel
 from Flacker import Flacker
@@ -9,6 +9,7 @@ from Flacker import Flacker
 #create flackers and channels
 flackers = {}
 channels = set([Channel('Main', 100)])
+flackers_in_channels = []
 
 #config
 app = Flask(__name__)
@@ -80,6 +81,7 @@ def chat(channel):
         elif request.method == 'POST':
             return render_template('chat.html', channels=channels,  user_name=user_name, channel=channel)
 
+
 @app.route('/chat/new_channel', methods=['GET', 'POST'])
 def new_channel():
 
@@ -94,7 +96,7 @@ def new_channel():
         elif request.method == 'POST':
             channel_name = request.form.get('channel_name')
             new_channel = Channel(channel_name, 100)
-             
+
             if channel_name is None:
                 return render_template('new_channel_error.html', message='Channel Name field required')
 
@@ -105,24 +107,44 @@ def new_channel():
                 channels.add(new_channel)
                 return redirect(url_for('chat', channel=channel_name))
 
-# #Enter a channel
-# @socketio.on('enter channel')
-# def enter_channel(sid, data):
-#     socketio.enter_room(sid, data['room'])
+#Enter a channel
+@socketio.on('enter channel')
+def enter_channel(data):
+    user_name = data['user_name']
+    channel = data['channel']
+    join_room(channel)
 
-# #Leave a channel
-# @socketio.on('leave channel')
-# def leave_channel(sid, data):
-#     socketio.leave_room(sid, data['room'])
+    #check if flacker is already in channel (such as a different tab)
+    if not {user_name, channel} in flackers_in_channels:
+        emit('post join', {
+            'message': f'{user_name} has joined {channel}!'}, room=channel, broadcast=True)
 
-# #Send a message to a channel
-# @socketio.on('submit message')
-# def post_messsage(sid, damessageta, channel):
-#     socketio.emit('post message', message, room=channel)
+    #add flacker to channel
+    flackers_in_channels.append({user_name, channel})
+
+#Leave a channel
+@socketio.on('leave channel')
+def leave_channel(data):
+    user_name = data['user_name']
+    channel = data['channel']
+    leave_room(channel)
+    print({user_name, channel} in flackers_in_channels)
+
+    #Remove flacker from first instance in channel
+    try:
+        flackers_in_channels.remove({user_name, channel})
+    except:
+        print(f'{user_name} was not found in {channel}.')
+    print({user_name, channel} in flackers_in_channels)
+
+    #Check if user is still in channel from another area (such as a different tab)
+    if not {user_name, channel} in flackers_in_channels:
+        emit('post leave', {
+             'message': f'{user_name} has left {channel}.'}, room=channel, broadcast=True)
 
 #Send a message to a channel
 @socketio.on('submit message')
 def post_messsage(data):
     message = data['message']
-    print(message)
-    emit('post message', {'message': message}, broadcast=True)
+    channel = data['channel']
+    emit('post message', {'message': message}, room=channel, broadcast=True)

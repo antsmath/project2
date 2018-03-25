@@ -27,11 +27,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // // Add message to channel for other users when user submits message
+    // socket.on('post message', data => {
+    //     const li = document.createElement('li');
+    //     li.innerHTML = `${data.message}`;
+    //     document.getElementById('messages').append(li);
+    // });
+
     // Add message to channel for other users when user submits message
     socket.on('post message', data => {
-        const li = document.createElement('li');
-        li.innerHTML = `${data.message}`;
-        document.getElementById('messages').append(li);
+        const card = document.createElement('div');
+        card.classList.add('card');
+        card.classList.add('text');
+        card.classList.add('center');
+        card.classList.add('rounded');
+        card.innerHTML = `${data.message}`;
+        document.getElementById('messages').append(card);
+    });
+
+    // Add message when user presses enter on text box
+    document.getElementById('text').addEventListener("keyup", (event) => {
+        event.preventDefault();
+        if (event.keyCode === 13) {
+            document.getElementById("submit").click();
+        }
     });
 
     // Add message to channel when user joins
@@ -48,9 +67,45 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('messages').append(li);
     });
 
+    // Start scrollbar at last message
+    window.onload = () => {
+        document.getElementById('main').scrollTop = document.getElementById('main').scrollHeight;
+    };
+
     // Exit channel when leaving page
-    window.addEventListener("beforeunload", () => {
+    window.addEventListener('beforeunload', () => {
         socket.emit('leave channel', { 'user_name': data_user_name, 'channel': data_channel });
     });
+
+    // Operate Navbar
+    let is_nav_open = false;
+    document.getElementById('other_channel_nav').onclick = () => {
+        // Close Navbar
+        if (is_nav_open) {
+            document.getElementById('Side_Nav').style.width = '0';
+            document.getElementById('header').style.marginLeft = '0';
+            document.getElementById('main').style.marginLeft = '0';
+            document.getElementById('footer').style.marginLeft = '0';
+            is_nav_open = false;
+        }
+        // Open Navbar
+        else {
+            document.getElementById('Side_Nav').style.width = '250px';
+            document.getElementById('header').style.marginLeft = '250px';
+            document.getElementById('main').style.marginLeft = '250px';
+            document.getElementById('footer').style.marginLeft = '250px';
+            is_nav_open = true;
+        }
+
+    };
+
+    // Close Navbar
+    document.getElementById('close_nav').onclick = () => {
+        document.getElementById('Side_Nav').style.width = '0';
+        document.getElementById('header').style.marginLeft = '0';
+        document.getElementById('main').style.marginLeft = '0';
+        document.getElementById('footer').style.marginLeft = '0';
+        is_nav_open = false;
+    }
 
 });

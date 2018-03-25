@@ -1,5 +1,6 @@
 from collections import deque
 from datetime import datetime
+from time import strftime
 
 
 #class for channel
@@ -25,7 +26,7 @@ class Channel:
         return self.name == other.name
 
     #add_message message to channel
-    def add_message(self, user_name, message, timestamp=datetime.now()):
+    def add_message(self, user_name, message, timestamp=datetime.now().strftime('%x %X')):
         self.messages.append((user_name, message, timestamp))
 
 
@@ -34,7 +35,7 @@ if __name__ == "__main__":
     #Test initialize
     f1 = 'Amy'
     a = Channel('Channel_1', 2)
-    t1 = datetime.now()
+    t1 = datetime.now().strftime('%x %X')
     assert a.name == 'Channel_1'
     #Test initialize max length
     a.add_message(f1, 'abc', t1)
@@ -60,7 +61,7 @@ if __name__ == "__main__":
 
     #Test add_message append/removal
     f2 = 'Amy'
-    t2 = datetime.now()
+    t2 = datetime.now().strftime('%x %X')
     d = Channel('Channel_2', 2)
     d.add_message(f2, 'a', t2)
     d.add_message(f2, 'b', t2)

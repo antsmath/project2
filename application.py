@@ -2,6 +2,8 @@ import os
 from flask import Flask, redirect, render_template, request, url_for, session
 from flask_session import Session
 from flask_socketio import SocketIO, emit, join_room, leave_room
+from datetime import datetime
+from time import strftime
 
 from Channel import Channel
 from Flacker import Flacker
@@ -66,7 +68,7 @@ def chat_no_channel():
     return redirect(url_for('index'))
 
 
-@app.route('/chat/<string:channel>', methods=['GET', 'POST'])
+@app.route('/chat/<string:channel>')
 def chat(channel):
 
     temp_channel = Channel(channel,0)
@@ -80,11 +82,8 @@ def chat(channel):
 
     else:
         user_name = session.get('user_name')
-        if request.method == 'GET':
-            return render_template('chat.html', channels=channels, user_name=user_name, channel=channel)
-
-        elif request.method == 'POST':
-            return render_template('chat.html', channels=channels,  user_name=user_name, channel=channel)
+        ind = channels.index(temp_channel)
+        return render_template('chat.html', channels=channels, user_name=user_name, channel=channel, ind=ind)
 
 
 @app.route('/chat/new_channel', methods=['GET', 'POST'])
@@ -117,7 +116,9 @@ def new_channel():
 def enter_channel(data):
     user_name = data['user_name']
     channel = data['channel']
+    timestamp = datetime.now().strftime('%x %X')
     message =  f'{user_name} has joined {channel}!'
+
     join_room(channel)
 
     #check if flacker is already in channel (such as a different tab)
@@ -125,9 +126,8 @@ def enter_channel(data):
         temp_channel = Channel(channel,0)
         try:
             ind = channels.index(temp_channel)
-            emit('post join', {
-                'message': message}, room=channel, broadcast=True)
-            channels[ind].add_message(user_name, message,)
+            emit('post join', {'user_name': user_name, 'message': message, 'timestamp': timestamp}, room=channel, broadcast=True)
+            channels[ind].add_message(user_name, message, timestamp)
         except:
             print(f'Channel {channel} not found, unable to add user.')
 
@@ -139,6 +139,7 @@ def enter_channel(data):
 def leave_channel(data):
     user_name = data['user_name']
     channel = data['channel']
+    timestamp = datetime.now().strftime('%x %X')
     leave_room(channel)
     message = f'{user_name} has left {channel}.'
 
@@ -153,8 +154,8 @@ def leave_channel(data):
         temp_channel = Channel(channel,0)
         try:
             ind = channels.index(temp_channel)
-            emit('post leave', {'message': message}, room=channel, broadcast=True)
-            channels[ind].add_message(user_name, message,)
+            emit('post leave', {'user_name': user_name, 'message': message, 'timestamp': timestamp}, room=channel, broadcast=True)
+            channels[ind].add_message(user_name, message, timestamp)
         except:
             print(f'Channel {channel} not found, unable to remove user.')
 
@@ -162,12 +163,13 @@ def leave_channel(data):
 @socketio.on('submit message')
 def post_messsage(data):
     user_name = data['user_name']
-    message = data['message']
+    message = data['message'] 
+    timestamp = datetime.now().strftime('%x %X')
     channel = data['channel']
     temp_channel = Channel(channel,0)
     try:
         ind = channels.index(temp_channel)
-        emit('post message', {'message': message}, room=channel, broadcast=True)
-        channels[ind].add_message(user_name, message,)
+        emit('post message', {'user_name': user_name, 'message': message, 'timestamp': timestamp}, room=channel, broadcast=True)
+        channels[ind].add_message(user_name, message, timestamp)
     except:
         print(f'Channel {channel} not found, unable to post message.')

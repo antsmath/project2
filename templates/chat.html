@@ -1,9 +1,10 @@
-{% extends "layout.html" %} {% block title %} Flack: {{ channel }} {% endblock %}
+{% extends 'layout.html' %} {% block title %} Flack: {{ channel }} {% endblock %}
 
 <head>
     {% block head %}
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js" defer></script>
-    <script src="{{url_for('static', filename='chat.js')}}"  data-user-name='{{ user_name }}' data-channel='{{ channel }}' defer></script>
+    <script src="{{url_for('static', filename='chat.js')}}" data-user-name='{{ user_name }}' data-channel='{{ channel }}' defer></script>
+
     <style>
         .sidenav {
             height: 100%;
@@ -41,7 +42,13 @@
 
         #main {
             transition: margin-left .5s;
-            padding: 16px;
+            height: 70vh;
+            overflow: auto;
+        }
+
+        #header {
+            transition: margin-left .5s;
+            height: 10vh;
         }
 
         @media screen and (max-height: 450px) {
@@ -52,51 +59,59 @@
                 font-size: 18px;
             }
         }
+
+        #footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            transition: margin-left .5s;
+            height: 20vh;
+        }
     </style>
     {% endblock %}
 </head>
 {% block body %}
-<div id="mySidenav" class="sidenav">
-    <a href="{{ url_for('new_channel') }}" class="bg-primary">New channel</a>
-    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    {% for channel_item in channels %}
-    {% if channel_item.name == channel %}
-    <a class="border" href="{{ url_for('chat', channel=channel_item.name )}}">{{ channel_item.name }}</a>
+<div id='Side_Nav' class='sidenav'>
+    <a href="{{ url_for('new_channel') }}" class='bg-primary'>New channel</a>
+    <a id='close_nav' href='javascript:void(0)' class='closebtn'>&times;</a>
+    {% for channel_item in channels %} {% if channel_item.name == channel %}
+    <a class='border' href="{{ url_for('chat', channel=channel_item.name )}}">{{ channel_item.name }}</a>
     {% else %}
     <a href="{{ url_for('chat', channel=channel_item.name )}}">{{ channel_item.name }}</a>
-    {% endif %}
-    {% endfor %}
+    {% endif %} {% endfor %}
 </div>
 
-<div id="main">
-    <h1 class="d-inline">Flack Channel: {{ channel }}</h1>
-    <h6 class="d-inline text-muted">
-        <span style="cursor:pointer" onclick="openNav()">(Other Channel)</span>
+<header id='header'>
+    <h1 class='d-inline'>Flack Channel: {{ channel }}</h1>
+    <h6 class='d-inline text-muted'>
+        <span id='other_channel_nav' style="cursor:pointer">(Other Channels)</span>
     </h6>
     <p>Flacker: {{ user_name }} </p>
-    <form id="chat-text" name="chat-form">
-        <fieldset>
-            <div class="form-group">
-                <!-- REMOVE STYLE!!! -->
-                <textarea id='text' form="chat-text" rows="4" placeholder="Type text here..." style="width: 100%; resize: none;" required></textarea>
-            </div>
-            <input id="current_channel" type="hidden" name="current_channel" value={{ channel }}>
-            <div class="form-group float-right inline">
-                <button type="submit" id="submit" class="btn btn-primary">Submit</button>
-            </div>
-        </fieldset>
-    </form>
+</header>
+<div id='main'>
+    <ul id='messages'>
+        {% for channel_message in channels[ind].messages %}
+        <li>
+            {{ channel_message[1] }}
+        </li>
+        {% endfor %}
+    </ul>
 </div>
-<ul id="messages">
-</ul>
-<script>
-    function openNav() {
-        document.getElementById("mySidenav").style.width = "250px";
-        document.getElementById("main").style.marginLeft = "250px";
-    }
-
-    function closeNav() {
-        document.getElementById("mySidenav").style.width = "0";
-        document.getElementById("main").style.marginLeft = "0";
-    }
-</script> {% endblock %}
+<footer id='footer'>
+    <div class='container'>
+        <form id='chat-text' name='chat-form'>
+            <fieldset>
+                <div class='form-group'>
+                    <!-- REMOVE STYLE!!! -->
+                    <textarea id='text' form='chat-text' rows='4' placeholder='Type text here...' style='width: 100%; resize: none;' required></textarea>
+                </div>
+                <input id='current_channel' type='hidden' name='current_channel' value={{ channel }}>
+                <div class='form-group float-right inline'>
+                    <button type='submit' id='submit' class='btn btn-primary'>Submit</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</footer>
+{% endblock %}

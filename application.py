@@ -8,7 +8,7 @@ from Flacker import Flacker
 
 #create flackers and channels
 flackers = {}
-channels = set([Channel('Main', 100)])
+channels = [Channel('Main', 100)]
 flackers_in_channels = []
 
 #config
@@ -69,9 +69,14 @@ def chat_no_channel():
 @app.route('/chat/<string:channel>', methods=['GET', 'POST'])
 def chat(channel):
 
+    temp_channel = Channel(channel,0)
     #check if flacker is logged in
     if session.get('user_name') is None:
         return redirect(url_for('index'))
+
+    #check if channel exist
+    elif temp_channel not in channels:
+        return redirect(url_for('chat', channel='Main'))
 
     else:
         user_name = session.get('user_name')
@@ -104,7 +109,7 @@ def new_channel():
                 return render_template('new_channel_error.html', message=f'Channel Name, {channel_name}, already exist.')
 
             else:
-                channels.add(new_channel)
+                channels.append(new_channel)
                 return redirect(url_for('chat', channel=channel_name))
 
 #Enter a channel
@@ -112,12 +117,19 @@ def new_channel():
 def enter_channel(data):
     user_name = data['user_name']
     channel = data['channel']
+    message =  f'{user_name} has joined {channel}!'
     join_room(channel)
 
     #check if flacker is already in channel (such as a different tab)
-    if not {user_name, channel} in flackers_in_channels:
-        emit('post join', {
-            'message': f'{user_name} has joined {channel}!'}, room=channel, broadcast=True)
+    if {user_name, channel} not in flackers_in_channels:
+        temp_channel = Channel(channel,0)
+        try:
+            ind = channels.index(temp_channel)
+            emit('post join', {
+                'message': message}, room=channel, broadcast=True)
+            channels[ind].add_message(user_name, message,)
+        except:
+            print(f'Channel {channel} not found, unable to add user.')
 
     #add flacker to channel
     flackers_in_channels.append({user_name, channel})
@@ -128,23 +140,34 @@ def leave_channel(data):
     user_name = data['user_name']
     channel = data['channel']
     leave_room(channel)
-    print({user_name, channel} in flackers_in_channels)
+    message = f'{user_name} has left {channel}.'
 
     #Remove flacker from first instance in channel
     try:
         flackers_in_channels.remove({user_name, channel})
     except:
         print(f'{user_name} was not found in {channel}.')
-    print({user_name, channel} in flackers_in_channels)
 
     #Check if user is still in channel from another area (such as a different tab)
-    if not {user_name, channel} in flackers_in_channels:
-        emit('post leave', {
-             'message': f'{user_name} has left {channel}.'}, room=channel, broadcast=True)
+    if {user_name, channel} not in flackers_in_channels:
+        temp_channel = Channel(channel,0)
+        try:
+            ind = channels.index(temp_channel)
+            emit('post leave', {'message': message}, room=channel, broadcast=True)
+            channels[ind].add_message(user_name, message,)
+        except:
+            print(f'Channel {channel} not found, unable to remove user.')
 
 #Send a message to a channel
 @socketio.on('submit message')
 def post_messsage(data):
+    user_name = data['user_name']
     message = data['message']
     channel = data['channel']
-    emit('post message', {'message': message}, room=channel, broadcast=True)
+    temp_channel = Channel(channel,0)
+    try:
+        ind = channels.index(temp_channel)
+        emit('post message', {'message': message}, room=channel, broadcast=True)
+        channels[ind].add_message(user_name, message,)
+    except:
+        print(f'Channel {channel} not found, unable to post message.')

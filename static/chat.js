@@ -15,12 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // When connected, configure buttons
     socket.on('connect', () => {
-
         // Submit message in chat box
         document.getElementById('submit').onclick = (event) => {
             const message = document.getElementById('text').value;
             if (message.length > 0) {
-                socket.emit('submit message', { 'message': message, 'channel': data_channel });
+                socket.emit('submit message', { 'user_name': data_user_name, 'message': message, 'channel': data_channel });
                 // Clear field
                 document.getElementById('text').value = ''
                 event.preventDefault();
@@ -50,8 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Exit channel when leaving page
-    window.addEventListener("beforeunload", () => { 
-    socket.emit('leave channel', { 'user_name': data_user_name, 'channel': data_channel });
+    window.addEventListener("beforeunload", () => {
+        socket.emit('leave channel', { 'user_name': data_user_name, 'channel': data_channel });
     });
 
 });

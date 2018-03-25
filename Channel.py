@@ -1,7 +1,6 @@
 from collections import deque
 from datetime import datetime
 
-from Flacker import Flacker
 
 #class for channel
 
@@ -26,14 +25,14 @@ class Channel:
         return self.name == other.name
 
     #add_message message to channel
-    def add_message(self, flacker, message, timestamp=datetime.now()):
-        self.messages.append((flacker, message, timestamp))
+    def add_message(self, user_name, message, timestamp=datetime.now()):
+        self.messages.append((user_name, message, timestamp))
 
 
 #Test
 if __name__ == "__main__":
     #Test initialize
-    f1 = Flacker('flacker_1', 'a')
+    f1 = 'Amy'
     a = Channel('Channel_1', 2)
     t1 = datetime.now()
     assert a.name == 'Channel_1'
@@ -60,7 +59,7 @@ if __name__ == "__main__":
     assert c1.__eq__(c4) is NotImplemented
 
     #Test add_message append/removal
-    f2 = Flacker('flacker_2', 'a')
+    f2 = 'Amy'
     t2 = datetime.now()
     d = Channel('Channel_2', 2)
     d.add_message(f2, 'a', t2)

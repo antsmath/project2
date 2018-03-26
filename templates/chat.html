@@ -20,7 +20,9 @@
     <h6 class='d-inline text-muted'>
         <span id='other_channel_nav'>(Other Channels)</span>
     </h6>
+    <a id='logout' href="{{ url_for('index') }}" class="btn btn-secondary float-right">Log out</a>
     <p>Flacker: {{ user_name }} </p>
+
 </header>
 <div id='main'>
     <div id='messages'>
@@ -41,7 +43,6 @@
         <form id='chat-text' name='chat-form'>
             <fieldset>
                 <div class='form-group'>
-                    <!-- REMOVE STYLE!!! -->
                     <textarea id='text' form='chat-text' rows='4' placeholder='Type text here...' required></textarea>
                 </div>
                 <input id='current_channel' type='hidden' name='current_channel' value={{ channel }}>

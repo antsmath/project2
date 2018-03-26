@@ -110,6 +110,11 @@ document.addEventListener('DOMContentLoaded', () => {
         request.send();
     }
 
+    // Logout removes last channel
+    document.getElementById('logout').addEventListener('click', () => {
+         localStorage.removeItem('last_channel'); 
+    });
+
 });
 
 function create_card(user_name, message, timestamp) {

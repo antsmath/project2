@@ -1,9 +1,11 @@
 import os
-from flask import Flask, redirect, render_template, request, url_for, session
+import json
+from flask import Flask, redirect, render_template, request, url_for, session, jsonify
 from flask_session import Session
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from datetime import datetime
 from time import strftime
+
 
 from Channel import Channel
 from Flacker import Flacker
@@ -71,7 +73,7 @@ def chat_no_channel():
 @app.route('/chat/<string:channel>')
 def chat(channel):
 
-    temp_channel = Channel(channel,0)
+    temp_channel = Channel(channel, 0)
     #check if flacker is logged in
     if session.get('user_name') is None:
         return redirect(url_for('index'))
@@ -97,36 +99,46 @@ def new_channel():
         if request.method == 'GET':
             return render_template('new_channel.html')
 
+        #create channel
         elif request.method == 'POST':
             channel_name = request.form.get('channel_name')
             new_channel = Channel(channel_name, 100)
 
+            #validate form is filled
             if channel_name is None:
                 return render_template('new_channel_error.html', message='Channel Name field required')
 
+            #validate channel_name has valid characters
+            elif not channel_name.isalnum():
+                return render_template('new_channel_error.html', message=f'Channel Name, {channel_name}, contained invalid characters.')
+
+            #check if channel already exist
             elif new_channel in channels:
                 return render_template('new_channel_error.html', message=f'Channel Name, {channel_name}, already exist.')
 
+            #create channel and load channel
             else:
                 channels.append(new_channel)
                 return redirect(url_for('chat', channel=channel_name))
 
-#Enter a channel
+
 @socketio.on('enter channel')
+#Enter a channel
 def enter_channel(data):
     user_name = data['user_name']
     channel = data['channel']
     timestamp = datetime.now().strftime('%x %X')
-    message =  f'{user_name} has joined {channel}!'
+    message = f'{user_name} has joined {channel}!'
 
     join_room(channel)
 
     #check if flacker is already in channel (such as a different tab)
     if {user_name, channel} not in flackers_in_channels:
-        temp_channel = Channel(channel,0)
+        temp_channel = Channel(channel, 0)
         try:
             ind = channels.index(temp_channel)
-            emit('post join', {'user_name': user_name, 'message': message, 'timestamp': timestamp}, room=channel, broadcast=True)
+            emit('post join', {'user_name': user_name, 'message': message,
+                               'timestamp': timestamp}, room=channel, broadcast=True)
             channels[ind].add_message(user_name, message, timestamp)
         except:
             print(f'Channel {channel} not found, unable to add user.')
@@ -134,8 +146,9 @@ def enter_channel(data):
     #add flacker to channel
     flackers_in_channels.append({user_name, channel})
 
-#Leave a channel
+
 @socketio.on('leave channel')
+#Leave a channel
 def leave_channel(data):
     user_name = data['user_name']
     channel = data['channel']
@@ -151,25 +164,34 @@ def leave_channel(data):
 
     #Check if user is still in channel from another area (such as a different tab)
     if {user_name, channel} not in flackers_in_channels:
-        temp_channel = Channel(channel,0)
+        temp_channel = Channel(channel, 0)
         try:
             ind = channels.index(temp_channel)
-            emit('post leave', {'user_name': user_name, 'message': message, 'timestamp': timestamp}, room=channel, broadcast=True)
+            emit('post leave', {'user_name': user_name, 'message': message,
+                                'timestamp': timestamp}, room=channel, broadcast=True)
             channels[ind].add_message(user_name, message, timestamp)
         except:
             print(f'Channel {channel} not found, unable to remove user.')
 
-#Send a message to a channel
+
 @socketio.on('submit message')
+#Send a message to a channel
 def post_messsage(data):
     user_name = data['user_name']
-    message = data['message'] 
+    message = data['message']
     timestamp = datetime.now().strftime('%x %X')
     channel = data['channel']
-    temp_channel = Channel(channel,0)
+    temp_channel = Channel(channel, 0)
     try:
         ind = channels.index(temp_channel)
-        emit('post message', {'user_name': user_name, 'message': message, 'timestamp': timestamp}, room=channel, broadcast=True)
+        emit('post message', {'user_name': user_name, 'message': message,
+                              'timestamp': timestamp}, room=channel, broadcast=True)
         channels[ind].add_message(user_name, message, timestamp)
     except:
         print(f'Channel {channel} not found, unable to post message.')
+
+
+@app.route('/get_channels/<string:channel>')
+#Return list of channels
+def get_channels(channel):
+        return render_template('channel_list.html', channels=channels, channel=channel)

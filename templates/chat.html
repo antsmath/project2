@@ -11,44 +11,45 @@
 <div id='Side_Nav' class='sidenav'>
     <a href="{{ url_for('new_channel') }}" class='sidenav-primary'>New channel</a>
     <a id='close_nav' href='javascript:void(0)' class='closebtn'>&times;</a>
-    {% for channel_item in channels %} {% if channel_item.name == channel %}
-    <a class='sidenav-active' href="{{ url_for('chat', channel=channel_item.name )}}">{{ channel_item.name }}</a>
-    {% else %}
-    <a href="{{ url_for('chat', channel=channel_item.name )}}">{{ channel_item.name }}</a>
-    {% endif %} {% endfor %}
+    <div id='channel_list'>
+    </div>
 </div>
 
 <header id='header'>
     <h1 class='d-inline'>Flack Channel: {{ channel }}</h1>
     <h6 class='d-inline text-muted'>
-        <span id='other_channel_nav' style="cursor:pointer">(Other Channels)</span>
+        <span id='other_channel_nav'>(Other Channels)</span>
     </h6>
     <p>Flacker: {{ user_name }} </p>
 </header>
 <div id='main'>
-    <ul id='messages'>
+    <div id='messages'>
         {% for channel_message in channels[ind].messages %}
-        <li>
+        <!-- <li>
             {{ channel_message[1] }}
-        </li>
+        </li> -->
+        <div class="card text center rounded">
+            <h5 class="card-title">{{ channel_message[0] }}</h5>
+            <p class="card-text">{{ channel_message[1] }}</p>
+            <p class="card-timestamp">{{ channel_message[2] }}</p>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
 </div>
 <footer id='footer'>
-        <div id='text-container' class='container'>
-            <form id='chat-text' name='chat-form'>
-                <fieldset>
-                    <div class='form-group'>
-                        <!-- REMOVE STYLE!!! -->
-                        <textarea id='text' form='chat-text' rows='4' placeholder='Type text here...' required></textarea>
-                    </div>
-                    <input id='current_channel' type='hidden' name='current_channel' value={{ channel }}>
-                    <div class='form-group float-right inline'>
-                        <button type='submit' id='submit' class='btn btn-primary'>Submit</button>
-                    </div>
-                </fieldset>
-            </form>
-        </div>
-    </footer>
+    <div id='text-container' class='container'>
+        <form id='chat-text' name='chat-form'>
+            <fieldset>
+                <div class='form-group'>
+                    <!-- REMOVE STYLE!!! -->
+                    <textarea id='text' form='chat-text' rows='4' placeholder='Type text here...' required></textarea>
+                </div>
+                <input id='current_channel' type='hidden' name='current_channel' value={{ channel }}>
+                <div class='form-group float-right inline'>
+                    <button type='submit' id='submit' class='btn btn-primary'>Submit</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</footer>
 {% endblock %}
-

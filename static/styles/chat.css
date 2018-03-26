@@ -1,7 +1,10 @@
 #main {
   transition: margin-left 0.5s;
   height: 70vh;
-  overflow: auto; }
+  overflow: auto;
+  border-left: 2px solid #f1f1f1;
+  border-top: 2px solid #f1f1f1;
+  border-right: 2px solid #f1f1f1; }
 
 #header {
   transition: margin-left 0.5s;
@@ -21,6 +24,11 @@
   width: 100%;
   resize: none;
   box-sizing: border-box; }
+
+#other_channel_nav {
+  cursor: pointer; }
+  #other_channel_nav:hover {
+    color: white; }
 
 .sidenav {
   height: 100%;
@@ -42,7 +50,7 @@
     transition: 0.25s;
     white-space: nowrap; }
     .sidenav a:hover {
-      color: #ffffff; }
+      color: white; }
   .sidenav .closebtn {
     position: absolute;
     top: 0;
@@ -55,5 +63,18 @@
   .sidenav .sidenav-active {
     background-color: #0A0A0A;
     color: #f1f1f1; }
+
+.card {
+  background-color: #0A0A0A;
+  border-left: 2px solid #f1f1f1;
+  margin: 5px; }
+  .card .card-title:after {
+    content: ":"; }
+  .card .card-timestamp {
+    position: absolute;
+    right: 5px;
+    top: 0; }
+  .card .card-text {
+    white-space: pre-line; }
 
 /*# sourceMappingURL=chat.css.map */

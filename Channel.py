@@ -14,16 +14,20 @@ class Channel:
         #messages
         self.messages = deque([], maxlen=maxlength)
 
-    #Hash Flacker
+    #Hash channel
     def __hash__(self):
         return hash((self.name))
 
-    #equals Flacker
+    #equals channel
     def __eq__(self, other):
         if not isinstance(other, type(self)):
             return NotImplemented
 
         return self.name == other.name
+
+    #string channel
+    def __str__(self):
+        return self.name 
 
     #add_message message to channel
     def add_message(self, user_name, message, timestamp=datetime.now().strftime('%x %X')):
@@ -69,3 +73,8 @@ if __name__ == "__main__":
     assert d.messages.count((f2, 'a', t2)) == 0
     assert d.messages.count((f2, 'b', t2)) == 1
     assert d.messages.count((f2, 'c', t2)) == 1
+
+    #Test str
+    e = Channel('Channel_1', 2)
+    assert str(e) == 'Channel_1'
+    assert not str(e) == 'Channel_2'

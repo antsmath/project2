@@ -1,7 +1,7 @@
 <body>
-{% for channel_item in channels %} {% if channel_item.name == channel %}
-<a class='sidenav-active' href="{{ url_for('chat', channel=channel_item.name )}}">{{ channel_item.name }}</a>
-{% else %}
-<a href="{{ url_for('chat', channel=channel_item.name )}}">{{ channel_item.name }}</a>
-{% endif %} {% endfor %}
+    {% for channel_item in channels %} {% if channel_item.name == channel %}
+    <a class='sidenav-active' href="{{ url_for('chat', channel=channel_item.name )}}">{{ channel_item.name }}</a>
+    {% else %}
+    <a href="{{ url_for('chat', channel=channel_item.name )}}">{{ channel_item.name }}</a>
+    {% endif %} {% endfor %}
 </body>

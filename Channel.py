@@ -27,7 +27,7 @@ class Channel:
 
     #string channel
     def __str__(self):
-        return self.name 
+        return self.name
 
     #add_message message to channel
     def add_message(self, user_name, message, timestamp=datetime.now().strftime('%x %X')):

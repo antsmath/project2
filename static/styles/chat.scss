@@ -1,6 +1,5 @@
 $side_nav_transition: 0.5s;
 $text_hover: white;
-
 #main {
     transition: margin-left $side_nav_transition;
     height: 70vh;
@@ -33,8 +32,8 @@ $text_hover: white;
     box-sizing: border-box;
 }
 
-#other_channel_nav{
-    cursor:pointer;
+#other_channel_nav {
+    cursor: pointer;
     &:hover {
         color: $text_hover;
     }
@@ -59,7 +58,6 @@ $text_hover: white;
         display: block;
         transition: $side_nav_transition/2;
         white-space: nowrap;
-
         &:hover {
             color: $text_hover;
         }
@@ -81,22 +79,21 @@ $text_hover: white;
     }
 }
 
-.card{
+.card {
     background-color: #0A0A0A;
     border-left: 2px solid #f1f1f1;
     margin: 5px;
-    .card-title{
-        &:after{
+    .card-title {
+        &:after {
             content: ":"
         }
     }
-    .card-timestamp{
-        position:absolute;
-        right:5px;
-        top:0;
+    .card-timestamp {
+        position: absolute;
+        right: 5px;
+        top: 0;
     }
-    .card-text{
+    .card-text {
         white-space: pre-line;
     }
 }
-

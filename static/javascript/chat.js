@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Logout removes last channel
     document.getElementById('logout').addEventListener('click', () => {
-         localStorage.removeItem('last_channel'); 
+        localStorage.removeItem('last_channel');
     });
 
 });

@@ -30,6 +30,9 @@ Requirements:
     (4) - Even with (3) a user can keep their return characters entered, allowing for some formatting.
     (5) - Users are able to view new rooms without refreshing
     (6) - Auto scroll to bottom of messages when a new message is entered
+    (7) - Users must be unique and provide passwords
+    (8) - Security feature: A user cannot inject html into the room names.
+    (9) - User is able to enter a message by pressing 'Enter' or add a return line to the message by pressing 'Shift+Enter'.
 
 Files:
     ..\project2

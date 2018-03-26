@@ -90,7 +90,7 @@ def chat(channel):
     else:
         user_name = session.get('user_name')
         ind = channels.index(temp_channel)
-        return render_template('chat.html', channels=channels, user_name=user_name, channel=channel, ind=ind)
+        return render_template('chat.html', channel_messages=channels[ind].messages, user_name=user_name, channel=channel)
 
 
 @app.route('/chat/new_channel', methods=['GET', 'POST'])

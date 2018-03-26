@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Flask, redirect, render_template, request, url_for, session, jsonify
+from flask import Flask, redirect, render_template, request, url_for, session
 from flask_session import Session
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from datetime import datetime
@@ -25,9 +25,12 @@ app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 
-
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
+    return render_template('index.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
     # remove current flacker if one is available
     session.clear()
 
@@ -67,7 +70,7 @@ def index():
 
 @app.route('/chat')
 def chat_no_channel():
-    return redirect(url_for('index'))
+    return redirect(url_for('login'))
 
 
 @app.route('/chat/<string:channel>')
@@ -75,11 +78,11 @@ def chat(channel):
 
     temp_channel = Channel(channel, 0)
     #check if flacker is logged in
-    if session.get('user_name') is None:
-        return redirect(url_for('index'))
+    # if session.get('user_name') is None:
+    #     return redirect(url_for('login'))
 
     #check if channel exist
-    elif temp_channel not in channels:
+    if temp_channel not in channels:
         return redirect(url_for('chat', channel='Main'))
 
     else:
@@ -93,7 +96,7 @@ def new_channel():
 
     #check if flacker is logged in
     if session.get('user_name') is None:
-        return redirect(url_for('index'))
+        return redirect(url_for('login'))
 
     else:
         if request.method == 'GET':

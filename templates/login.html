@@ -10,7 +10,7 @@
 </h2>
 {% block alert %} {% endblock %}
 
-<form id="login-form" name="login-form" action="{{ url_for('index') }}" method="POST">
+<form id="login-form" name="login-form" action="{{ url_for('login') }}" method="POST">
     <fieldset>
         <div class="form-group">
             <input id="user_name" autocomplete="off" autofocus class="form-control" name="user_name" placeholder="Login Name" type="text"
